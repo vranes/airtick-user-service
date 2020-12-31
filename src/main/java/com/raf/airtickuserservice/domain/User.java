@@ -22,8 +22,7 @@ public class User {
     private String password;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private List<CreditCard> cards = new ArrayList<>();
+    private Integer miles;
     @ManyToOne(optional = false)
     private Role role;
- //   private Integer numberOfReservations;
-
 }
