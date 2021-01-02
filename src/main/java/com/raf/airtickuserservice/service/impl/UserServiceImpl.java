@@ -7,7 +7,7 @@ import com.raf.airtickuserservice.exception.NotFoundException;
 import com.raf.airtickuserservice.mapper.UserMapper;
 import com.raf.airtickuserservice.repository.UserRankRepository;
 import com.raf.airtickuserservice.repository.UserRepository;
-import com.raf.airtickuserservice.secutiry.service.TokenService;
+import com.raf.airtickuserservice.security.service.TokenService;
 import com.raf.airtickuserservice.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -58,6 +58,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto findById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String
+                .format("User with requested id not found")));
+        return userMapper.userToUserDto(user);
+    }
+
+    @Override
     public UserDto add(UserCreateDto userCreateDto) {
         User user = userMapper.userCreateDtoToUser(userCreateDto);
         userRepository.save(user);                          // TODO mail obavestenje?
@@ -65,18 +72,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(UserUpdateDto userUpdateDto) {
-                 // TODO
-        return null;
+    public UserDto update(Long id, UserUpdateDto userUpdateDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Product with id: %d not found.", id)));
+        //Set values
+        user.setFirstName(userUpdateDto.getFirstName());
+        user.setLastName(userUpdateDto.getLastName());
+        user.setPassport(userUpdateDto.getPassport());
+        user.setPassword(userUpdateDto.getPassword());
+        user.setEmail(userUpdateDto.getEmail());
+        //Map to DTO and return it
+        return userMapper.userToUserDto(userRepository.save(user));
+
     }
 
     @Override
     public TokenResponseDto login(TokenRequestDto tokenRequestDto) {
         //Try to find active user for specified credentials
+
         User user = userRepository
-                .findUserByUsernameAndPassword(tokenRequestDto.getUsername(), tokenRequestDto.getPassword())
+                .findUserByEmailAndPassword(tokenRequestDto.getEmail(), tokenRequestDto.getPassword())
                 .orElseThrow(() -> new NotFoundException(String
-                        .format("User with username: %s and password: %s not found.", tokenRequestDto.getUsername(),
+                        .format("User with email: %s and password: %s not found.", tokenRequestDto.getEmail(),
                                 tokenRequestDto.getPassword())));
         //Create token payload
         Claims claims = Jwts.claims();

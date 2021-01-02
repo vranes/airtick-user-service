@@ -1,4 +1,4 @@
-package com.raf.airtickuserservice.secutiry.service;
+package com.raf.airtickuserservice.security.service;
 
 import io.jsonwebtoken.Claims;
 

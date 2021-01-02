@@ -1,4 +1,4 @@
-package com.raf.airtickuserservice.secutiry;
+package com.raf.airtickuserservice.security;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

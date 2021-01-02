@@ -1,6 +1,6 @@
-package com.raf.airtickuserservice.secutiry;
+package com.raf.airtickuserservice.security;
 
-import com.raf.airtickuserservice.secutiry.service.TokenService;
+import com.raf.airtickuserservice.security.service.TokenService;
 import io.jsonwebtoken.Claims;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,7 +27,7 @@ public class SecurityAspect {
         this.tokenService = tokenService;
     }
 
-    @Around("@annotation(com.raf.airtickuserservice.secutiry.CheckSecurity)")
+    @Around("@annotation(com.raf.airtickuserservice.security.CheckSecurity)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         //Get method signature
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();

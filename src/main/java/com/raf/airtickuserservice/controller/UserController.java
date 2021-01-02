@@ -1,7 +1,7 @@
 package com.raf.airtickuserservice.controller;
 
 import com.raf.airtickuserservice.dto.*;
-import com.raf.airtickuserservice.secutiry.CheckSecurity;
+import com.raf.airtickuserservice.security.CheckSecurity;
 import com.raf.airtickuserservice.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -34,8 +34,7 @@ public class UserController {
                             "Multiple sort criteria are supported.")})
     @GetMapping
     @CheckSecurity(roles = {"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Page<UserDto>> getAllUsers(@RequestHeader("Authorization") String authorization,
-                                                     Pageable pageable) {
+    public ResponseEntity<Page<UserDto>> getAllUsers(@RequestHeader("Authorization") String authorization, Pageable pageable) {
 
         return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
     }
@@ -55,5 +54,15 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDto> loginUser(@RequestBody @Valid TokenRequestDto tokenRequestDto) {
         return new ResponseEntity<>(userService.login(tokenRequestDto), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Update profile")
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody @Valid UserUpdateDto userUpdateDto) {
+        UserDto userDto = userService.findById(id);
+        if (! userDto.getEmail().equals(userUpdateDto.getEmail()))
+            System.out.println("A confirmational mail sent to the new e-mail address: " + userUpdateDto.getEmail());
+            //TODO poslati mejl ovde ili u servisu? i kako se salje mejl?
+        return ResponseEntity.ok(userService.update(id, userUpdateDto));
     }
 }

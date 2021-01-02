@@ -3,7 +3,6 @@ package com.raf.airtickuserservice.domain;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +16,7 @@ public class User {
     private Long id;
     private Long passport;
     private String email;
+    private String username;
     private String firstName;
     private String lastName;
     private String password;

@@ -10,9 +10,11 @@ public interface UserService {
 
     DiscountDto findDiscount(Long id);
 
+    UserDto findById(Long id);
+
     UserDto add(UserCreateDto userCreateDto);
 
-    UserDto update(UserUpdateDto userUpdateDto);
+    UserDto update(Long id, UserUpdateDto userUpdateDto);
 
     TokenResponseDto login(TokenRequestDto tokenRequestDto);
 }
