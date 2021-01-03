@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Formatter;
 
 @RestController
 @RequestMapping("/user")
@@ -64,5 +65,11 @@ public class UserController {
             System.out.println("A confirmational mail sent to the new e-mail address: " + userUpdateDto.getEmail());
             //TODO poslati mejl ovde ili u servisu? i kako se salje mejl?
         return ResponseEntity.ok(userService.update(id, userUpdateDto));
+    }
+
+    @ApiOperation(value = "Update miles")
+    @PutMapping("/{id}/miles")
+    public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody @Valid Integer miles) {
+        return ResponseEntity.ok( userService.updateMiles(id, miles));
     }
 }

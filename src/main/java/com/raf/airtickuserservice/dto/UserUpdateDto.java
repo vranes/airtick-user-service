@@ -23,5 +23,6 @@ public class UserUpdateDto {
     private String lastName;
     @Length(min = 8, max = 20)
     private String password;
+    private Integer miles;
 
 }

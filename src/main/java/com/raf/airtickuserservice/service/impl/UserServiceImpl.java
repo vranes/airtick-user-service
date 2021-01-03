@@ -4,6 +4,7 @@ import com.raf.airtickuserservice.domain.User;
 import com.raf.airtickuserservice.domain.UserRank;
 import com.raf.airtickuserservice.dto.*;
 import com.raf.airtickuserservice.exception.NotFoundException;
+import com.raf.airtickuserservice.mapper.CardMapper;
 import com.raf.airtickuserservice.mapper.UserMapper;
 import com.raf.airtickuserservice.repository.UserRankRepository;
 import com.raf.airtickuserservice.repository.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -26,12 +28,14 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private UserRankRepository userRankRepository;
     private UserMapper userMapper;
+    private CardMapper cardMapper;
 
-    public UserServiceImpl(UserRepository userRepository, TokenService tokenService, UserRankRepository userRankRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, TokenService tokenService, UserRankRepository userRankRepository, UserMapper userMapper, CardMapper cardMapper) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.userMapper = userMapper;
         this.userRankRepository = userRankRepository;
+        this.cardMapper = cardMapper;
     }
 
     @Override
@@ -59,8 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String
-                .format("User with requested id not found")));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with requested id not found"));
         return userMapper.userToUserDto(user);
     }
 
@@ -72,14 +75,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto addCardToUser(Long id, CreditCardCreateDto creditCardCreateDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("User with id: %d not found.", id)));
+        user.getCards().add(cardMapper.CreditCardCreateDtoToCreditCard(creditCardCreateDto));
+        return userMapper.userToUserDto(userRepository.save(user));
+    }
+
+    @Override
     public UserDto update(Long id, UserUpdateDto userUpdateDto) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Product with id: %d not found.", id)));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("User with id: %d not found.", id)));
         //Set values
         user.setFirstName(userUpdateDto.getFirstName());
         user.setLastName(userUpdateDto.getLastName());
         user.setPassport(userUpdateDto.getPassport());
         user.setPassword(userUpdateDto.getPassword());
         user.setEmail(userUpdateDto.getEmail());
+        user.setMiles(userUpdateDto.getMiles());
+        //Map to DTO and return it
+        return userMapper.userToUserDto(userRepository.save(user));
+
+    }
+
+    @Override
+    public UserDto updateMiles(Long id, Integer miles) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("User with id: %d not found.", id)));
+        //Set miles
+        user.setMiles(user.getMiles() + miles);
         //Map to DTO and return it
         return userMapper.userToUserDto(userRepository.save(user));
 
