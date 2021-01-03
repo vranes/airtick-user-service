@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
     public UserDto updateMiles(Long id, Integer miles) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("User with id: %d not found.", id)));
         //Set miles
-        user.setMiles(user.getMiles() + miles);
+        user.setMiles(miles);
         //Map to DTO and return it
         return userMapper.userToUserDto(userRepository.save(user));
 

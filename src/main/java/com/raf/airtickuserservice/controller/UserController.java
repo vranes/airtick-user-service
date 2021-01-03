@@ -70,6 +70,6 @@ public class UserController {
     @ApiOperation(value = "Update miles")
     @PutMapping("/{id}/miles")
     public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody @Valid Integer miles) {
-        return ResponseEntity.ok( userService.updateMiles(id, miles));
+        return ResponseEntity.ok(userService.updateMiles(id, miles));
     }
 }
