@@ -25,4 +25,5 @@ public class User {
     private Integer miles;
     @ManyToOne(optional = false)
     private Role role;
+    private Boolean verified;
 }

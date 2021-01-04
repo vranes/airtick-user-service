@@ -48,15 +48,16 @@ public class UserController {
         return new ResponseEntity<>(userService.findDiscount(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/mail-verification")                                              // TODO
-    public ResponseEntity<UserDto> mailVerification(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
-    }
-
     @ApiOperation(value = "Register user")
     @PostMapping
     public ResponseEntity<UserDto> saveUser(@RequestBody @Valid UserCreateDto userCreateDto) {
         return new ResponseEntity<>(userService.add(userCreateDto), HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Verify mail")
+    @GetMapping("/{id}/mail-verification")
+    public ResponseEntity<UserDto> mailVerification(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.mailVerification(id), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Login")
@@ -67,16 +68,20 @@ public class UserController {
 
     @ApiOperation(value = "Update profile")
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody @Valid UserUpdateDto userUpdateDto) {
-        UserDto userDto = userService.findById(id);
-        if (! userDto.getEmail().equals(userUpdateDto.getEmail()))
-            emailService.sendSimpleMessage(userUpdateDto.getEmail(), "Confirmation Mail", "To confirm mail change, click on the link: http://localhost:8082/api/" + id + "/mail-verification");
+    public ResponseEntity<UserDto> updateProfile(@PathVariable("id") Long id, @RequestBody @Valid UserUpdateDto userUpdateDto) {
         return ResponseEntity.ok(userService.update(id, userUpdateDto));
     }
 
     @ApiOperation(value = "Update miles")
     @PutMapping("/{id}/miles")
-    public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody @Valid Integer miles) {
+    public ResponseEntity<UserDto> updateMiles(@PathVariable("id") Long id, @RequestBody @Valid Integer miles) {
         return ResponseEntity.ok(userService.updateMiles(id, miles));
     }
+
+    @ApiOperation(value = "Add a credit card")
+    @PutMapping("/{id}/new-card")
+    public ResponseEntity<UserDto> addCard(@PathVariable("id") Long id, @RequestBody @Valid CreditCardCreateDto creditCardCreateDto) {
+        return ResponseEntity.ok(userService.addCardToUser(id, creditCardCreateDto));
+    }
+
 }

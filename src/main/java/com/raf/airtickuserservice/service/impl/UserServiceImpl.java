@@ -4,6 +4,8 @@ import com.raf.airtickuserservice.domain.User;
 import com.raf.airtickuserservice.domain.UserRank;
 import com.raf.airtickuserservice.dto.*;
 import com.raf.airtickuserservice.email.EmailService;
+import com.raf.airtickuserservice.exception.CustomException;
+import com.raf.airtickuserservice.exception.ErrorCode;
 import com.raf.airtickuserservice.exception.NotFoundException;
 import com.raf.airtickuserservice.mapper.CardMapper;
 import com.raf.airtickuserservice.mapper.UserMapper;
@@ -15,6 +17,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,9 +76,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(UserCreateDto userCreateDto) {
         User user = userMapper.userCreateDtoToUser(userCreateDto);
+        user.setVerified(false);
         userRepository.save(user);
         emailService.sendSimpleMessage(userCreateDto.getEmail(), "Confirmation Mail", "To continue registration, click on the link: http://localhost:8082/api/" + user.getId() + "/mail-verification");
         return userMapper.userToUserDto(user);
+    }
+
+    @Override
+    public UserDto mailVerification(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with requested id not found"));
+        user.setVerified(true);
+        return userMapper.userToUserDto(userRepository.save(user));
     }
 
     @Override
@@ -88,6 +99,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(Long id, UserUpdateDto userUpdateDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("User with id: %d not found.", id)));
+        if (! user.getEmail().equals(userUpdateDto.getEmail())){
+            user.setVerified(false);
+            emailService.sendSimpleMessage(userUpdateDto.getEmail(), "Confirmation Mail", "To confirm mail change, click on the link: http://localhost:8082/api/" + id + "/mail-verification");
+        }
         //Set values
         user.setFirstName(userUpdateDto.getFirstName());
         user.setLastName(userUpdateDto.getLastName());
@@ -97,7 +112,6 @@ public class UserServiceImpl implements UserService {
         user.setMiles(userUpdateDto.getMiles());
         //Map to DTO and return it
         return userMapper.userToUserDto(userRepository.save(user));
-
     }
 
     @Override
@@ -119,6 +133,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException(String
                         .format("User with email: %s and password: %s not found.", tokenRequestDto.getEmail(),
                                 tokenRequestDto.getPassword())));
+        if (!user.getVerified())
+            throw new CustomException("Please verify your e-mail address before logging in", ErrorCode.EMAIL_NOT_VERIFIED, HttpStatus.PRECONDITION_FAILED);
         //Create token payload
         Claims claims = Jwts.claims();
         claims.put("id", user.getId());

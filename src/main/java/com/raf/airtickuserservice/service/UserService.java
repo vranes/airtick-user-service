@@ -18,6 +18,8 @@ public interface UserService {
 
     UserDto addCardToUser (Long id, CreditCardCreateDto creditCardCreateDto);
 
+    UserDto mailVerification(Long id);
+
     UserDto update(Long id, UserUpdateDto userUpdateDto);
 
     UserDto updateMiles(Long id, Integer miles);
