@@ -3,6 +3,7 @@ package com.raf.airtickuserservice.service.impl;
 import com.raf.airtickuserservice.domain.User;
 import com.raf.airtickuserservice.domain.UserRank;
 import com.raf.airtickuserservice.dto.*;
+import com.raf.airtickuserservice.email.EmailService;
 import com.raf.airtickuserservice.exception.NotFoundException;
 import com.raf.airtickuserservice.mapper.CardMapper;
 import com.raf.airtickuserservice.mapper.UserMapper;
@@ -29,13 +30,15 @@ public class UserServiceImpl implements UserService {
     private UserRankRepository userRankRepository;
     private UserMapper userMapper;
     private CardMapper cardMapper;
+    private EmailService emailService;
 
-    public UserServiceImpl(UserRepository userRepository, TokenService tokenService, UserRankRepository userRankRepository, UserMapper userMapper, CardMapper cardMapper) {
+    public UserServiceImpl(UserRepository userRepository, TokenService tokenService, UserRankRepository userRankRepository, UserMapper userMapper, CardMapper cardMapper, EmailService emailService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.userMapper = userMapper;
         this.userRankRepository = userRankRepository;
         this.cardMapper = cardMapper;
+        this.emailService = emailService;
     }
 
     @Override
@@ -70,7 +73,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(UserCreateDto userCreateDto) {
         User user = userMapper.userCreateDtoToUser(userCreateDto);
-        userRepository.save(user);                          // TODO mail obavestenje?
+        userRepository.save(user);
+        emailService.sendSimpleMessage(userCreateDto.getEmail(), "Confirmation Mail", "To continue registration, click on the link: http://localhost:8082/api/" + user.getId() + "/mail-verification");
         return userMapper.userToUserDto(user);
     }
 

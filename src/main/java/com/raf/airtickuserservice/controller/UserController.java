@@ -1,6 +1,7 @@
 package com.raf.airtickuserservice.controller;
 
 import com.raf.airtickuserservice.dto.*;
+import com.raf.airtickuserservice.email.EmailService;
 import com.raf.airtickuserservice.security.CheckSecurity;
 import com.raf.airtickuserservice.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,9 +21,11 @@ import java.util.Formatter;
 public class UserController {
 
     private UserService userService;
+    private EmailService emailService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, EmailService emailService) {
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @ApiOperation(value = "Get all users")
@@ -45,6 +48,11 @@ public class UserController {
         return new ResponseEntity<>(userService.findDiscount(id), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/mail-verification")                                              // TODO
+    public ResponseEntity<UserDto> mailVerification(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Register user")
     @PostMapping
     public ResponseEntity<UserDto> saveUser(@RequestBody @Valid UserCreateDto userCreateDto) {
@@ -62,8 +70,7 @@ public class UserController {
     public ResponseEntity<UserDto> update(@PathVariable("id") Long id, @RequestBody @Valid UserUpdateDto userUpdateDto) {
         UserDto userDto = userService.findById(id);
         if (! userDto.getEmail().equals(userUpdateDto.getEmail()))
-            System.out.println("A confirmational mail sent to the new e-mail address: " + userUpdateDto.getEmail());
-            //TODO poslati mejl ovde ili u servisu? i kako se salje mejl?
+            emailService.sendSimpleMessage(userUpdateDto.getEmail(), "Confirmation Mail", "To confirm mail change, click on the link: http://localhost:8082/api/" + id + "/mail-verification");
         return ResponseEntity.ok(userService.update(id, userUpdateDto));
     }
 
