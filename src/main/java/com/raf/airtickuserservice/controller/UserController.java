@@ -50,9 +50,9 @@ public class UserController {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/find-id")
+    @GetMapping("/find-id/{email}")
     @CheckSecurity(roles = {"ROLE_ADMIN", "ROLE_USER"})
-    public ResponseEntity<Long> findIdByEmail(@RequestHeader("Authorization") String authorization, @RequestBody @Valid String email) {
+    public ResponseEntity<Long> findIdByEmail(@RequestHeader("Authorization") String authorization, @PathVariable("email") String email) {
         return new ResponseEntity<>(userService.findIdByEmail(email), HttpStatus.OK);
     }
 
