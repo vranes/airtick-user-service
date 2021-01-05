@@ -5,11 +5,13 @@ import org.hibernate.validator.constraints.Length;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Size;
+
 @Getter
 @Setter
 public class CreditCardDto {
     private Long id;
-    @Length(min = 3, max = 3)
+    @Size(max = 999 , min = 100)
     private int pin;
     @JsonProperty("first_name")
     private String FirstName;

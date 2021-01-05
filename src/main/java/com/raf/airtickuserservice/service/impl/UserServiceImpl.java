@@ -76,9 +76,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(UserCreateDto userCreateDto) {
         User user = userMapper.userCreateDtoToUser(userCreateDto);
-        user.setVerified(false);
         userRepository.save(user);
-        emailService.sendSimpleMessage(userCreateDto.getEmail(), "Confirmation Mail", "To continue registration, click on the link: http://localhost:8082/api/" + user.getId() + "/mail-verification");
+        emailService.sendSimpleMessage(userCreateDto.getEmail(), "Confirmation Mail", "To continue registration, click on the link: http://localhost:8082/api/user/" + user.getId() + "/mail-verification");
         return userMapper.userToUserDto(user);
     }
 

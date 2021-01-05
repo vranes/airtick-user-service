@@ -39,13 +39,26 @@ public class TestDataRunner implements CommandLineRunner {
         //admin.setUsername("admin");
         admin.setPassword("admin");
         admin.setRole(roleAdmin);
+        admin.setVerified(true);
         userRepository.save(admin);
         User admin2 = new User();
         admin2.setEmail("admin2@gmail.com");
         //admin2.setUsername("admin2");
         admin2.setPassword("admin2");
         admin2.setRole(roleAdmin);
+        admin.setVerified(true);
         userRepository.save(admin2);
+
+        User user = new User();
+        user.setEmail("vranesnikolina@gmail.com");
+        user.setPassword("12345678");
+        user.setRole(roleUser);
+        user.setVerified(true);
+        user.setFirstName("nikolina");
+        user.setLastName("vranes");
+        user.setPassport(Long.parseLong("11111111"));
+        user.setMiles(0);
+        userRepository.save(user);
         //User statuses
         userRankRepository.save(new UserRank(Rank.BRONZE, 0, 1000, 0));
         userRankRepository.save(new UserRank(Rank.SILVER, 1000, 10000, 10));

@@ -33,8 +33,9 @@ public class UserMapper {
         user.setLastName(userCreateDto.getLastName());
         user.setPassport(userCreateDto.getPassport());
         user.setPassword(userCreateDto.getPassword());
-       // user.setRole(roleRepository.findRoleByName("ROLE_USER").get()); // TODO
+        user.setRole(roleRepository.findRoleByName("ROLE_USER").get());
         user.setMiles(0);
+        user.setVerified(false);
         // TODO Set cards ?
 
         return user;

@@ -39,8 +39,12 @@ public class UserController {
     @GetMapping
     @CheckSecurity(roles = {"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Page<UserDto>> getAllUsers(@RequestHeader("Authorization") String authorization, Pageable pageable) {
-
         return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> findById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/discount")
