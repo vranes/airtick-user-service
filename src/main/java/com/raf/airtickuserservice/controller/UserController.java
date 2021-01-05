@@ -7,19 +7,23 @@ import com.raf.airtickuserservice.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.Formatter;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     private UserService userService;
     private EmailService emailService;
 
@@ -27,7 +31,6 @@ public class UserController {
         this.userService = userService;
         this.emailService = emailService;
     }
-
     @ApiOperation(value = "Get all users")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "What page number you want", dataType = "string", paramType = "query"),
@@ -72,6 +75,9 @@ public class UserController {
     @ApiOperation(value = "Login")
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDto> loginUser(@RequestBody @Valid TokenRequestDto tokenRequestDto) {
+        System.out.println("im in login start");
+        System.out.println(tokenRequestDto);
+
         return new ResponseEntity<>(userService.login(tokenRequestDto), HttpStatus.OK);
     }
 
