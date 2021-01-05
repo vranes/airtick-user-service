@@ -47,6 +47,11 @@ public class UserController {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/find-id")
+    public ResponseEntity<Long> findIdByEmail(@RequestBody @Valid String email) {
+        return new ResponseEntity<>(userService.findIdByEmail(email), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/discount")
     public ResponseEntity<DiscountDto> getDiscount(@PathVariable("id") Long id) {
         return new ResponseEntity<>(userService.findDiscount(id), HttpStatus.OK);

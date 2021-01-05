@@ -74,6 +74,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long findIdByEmail(String email) {
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new NotFoundException("User with requested id not found"));
+        return user.getId();
+    }
+
+    @Override
     public UserDto add(UserCreateDto userCreateDto) {
         User user = userMapper.userCreateDtoToUser(userCreateDto);
         userRepository.save(user);

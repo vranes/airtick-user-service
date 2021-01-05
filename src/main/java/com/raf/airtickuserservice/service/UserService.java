@@ -14,6 +14,8 @@ public interface UserService {
 
     UserDto findById(Long id);
 
+    Long findIdByEmail(String email);
+
     UserDto add(UserCreateDto userCreateDto);
 
     UserDto addCardToUser (Long id, CreditCardCreateDto creditCardCreateDto);
