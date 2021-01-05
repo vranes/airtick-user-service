@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class UserUpdateDto {
 
-    @NotBlank
+    @NotNull
     private Long passport;
     @Email
     private String email;
