@@ -126,7 +126,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public TokenResponseDto login(TokenRequestDto tokenRequestDto) {
         //Try to find active user for specified credentials
+        System.out.println( tokenRequestDto.getPassword());
+        System.out.println( tokenRequestDto.getEmail());
 
+        System.out.println("heree");
         User user = userRepository
                 .findUserByEmailAndPassword(tokenRequestDto.getEmail(), tokenRequestDto.getPassword())
                 .orElseThrow(() -> new NotFoundException(String
