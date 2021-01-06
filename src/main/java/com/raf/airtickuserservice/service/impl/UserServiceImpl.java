@@ -1,5 +1,6 @@
 package com.raf.airtickuserservice.service.impl;
 
+import com.raf.airtickuserservice.domain.CreditCard;
 import com.raf.airtickuserservice.domain.User;
 import com.raf.airtickuserservice.domain.UserRank;
 import com.raf.airtickuserservice.dto.*;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -77,6 +79,17 @@ public class UserServiceImpl implements UserService {
     public Long findIdByEmail(String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new NotFoundException("User with requested id not found"));
         return user.getId();
+    }
+
+    @Override
+    public List<CreditCardDto> findCardsById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with requested id not found"));
+        List<CreditCard> list = user.getCards();
+        List<CreditCardDto> dtoList = new ArrayList<>();
+        for (CreditCard c: list){
+            dtoList.add(cardMapper.CreditCardToCreditCardDto(c));
+        }
+        return dtoList;
     }
 
     @Override

@@ -3,7 +3,9 @@ package com.raf.airtickuserservice.controller;
 import com.raf.airtickuserservice.dto.*;
 import com.raf.airtickuserservice.email.EmailService;
 import com.raf.airtickuserservice.security.CheckSecurity;
+import com.raf.airtickuserservice.security.service.TokenService;
 import com.raf.airtickuserservice.service.UserService;
+import io.jsonwebtoken.Claims;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -20,14 +22,16 @@ import org.springframework.web.filter.CorsFilter;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Formatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private UserService userService;
     private EmailService emailService;
+    private TokenService tokenService;
 
-    public UserController(UserService userService, EmailService emailService) {
+    public UserController(UserService userService, EmailService emailService, TokenService tokenService) {
         this.userService = userService;
         this.emailService = emailService;
     }
@@ -50,10 +54,27 @@ public class UserController {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/cards")
+    @CheckSecurity(roles = {"ROLE_USER"})
+    public ResponseEntity<List<CreditCardDto>> findCards(@RequestHeader("Authorization") String authorization) {
+        String token = authorization.split(" ")[1];
+        Claims claims = tokenService.parseToken(token);
+        Long id = claims.get("id", Long.class);
+        return new ResponseEntity<>(userService.findCardsById(id), HttpStatus.OK);
+    }
+
     @GetMapping("/find-id/{email}")
     @CheckSecurity(roles = {"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<Long> findIdByEmail(@RequestHeader("Authorization") String authorization, @PathVariable("email") String email) {
         return new ResponseEntity<>(userService.findIdByEmail(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/find-id")
+    @CheckSecurity(roles = {"ROLE_ADMIN", "ROLE_USER"})
+    public ResponseEntity<Long> findId(@RequestHeader("Authorization") String authorization) {
+        String token = authorization.split(" ")[1];
+        Claims claims = tokenService.parseToken(token);
+        return new ResponseEntity<>(claims.get("id", Long.class), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/discount")

@@ -13,12 +13,12 @@ import javax.validation.constraints.Size;
 @Setter
 public class CreditCardDto {
     private Long id;
-    @Min(value=0, message="must be 3 digits")
-    @Max(value=999, message="must be 3 digits")
-    private int pin;
+   // @Min(value=0, message="must be 3 digits")
+   // @Max(value=999, message="must be 3 digits")
+    //private int pin;
     @JsonProperty("first_name")
     private String FirstName;
     @JsonProperty("last_name")
     private String LastName;
-    private Long userId;
+  //  private Long userId;
 }
