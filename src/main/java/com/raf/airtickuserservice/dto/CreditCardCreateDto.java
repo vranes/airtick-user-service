@@ -5,11 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 @Getter
 @Setter
 public class CreditCardCreateDto {
     private Long id;
-    @Length(min = 3, max = 3)
+    @Min(value=0, message="must be 3 digits")
+    @Max(value=999, message="must be 3 digits")
     private int pin;
     @JsonProperty("first_name")
     private String FirstName;
