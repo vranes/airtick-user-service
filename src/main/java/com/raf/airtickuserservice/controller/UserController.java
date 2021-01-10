@@ -34,6 +34,7 @@ public class UserController {
     public UserController(UserService userService, EmailService emailService, TokenService tokenService) {
         this.userService = userService;
         this.emailService = emailService;
+        this.tokenService = tokenService;
     }
     @ApiOperation(value = "Get all users")
     @ApiImplicitParams({
@@ -59,7 +60,7 @@ public class UserController {
     public ResponseEntity<List<CreditCardDto>> findCards(@RequestHeader("Authorization") String authorization) {
         String token = authorization.split(" ")[1];
         Claims claims = tokenService.parseToken(token);
-        Long id = claims.get("id", Long.class);
+        Long id = Long.parseLong(claims.get("id", Integer.class).toString());
         return new ResponseEntity<>(userService.findCardsById(id), HttpStatus.OK);
     }
 
