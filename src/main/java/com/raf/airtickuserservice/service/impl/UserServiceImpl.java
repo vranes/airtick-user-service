@@ -143,6 +143,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto cancelTicket(Long id, Integer flightLength) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("User with id: %d not found.", id)));
+        //Set miles
+        user.setMiles(user.getMiles() - flightLength);
+
+        emailService.sendSimpleMessage(user.getEmail(), "Airtick Flight Cancelled",
+                "Dear customer, We are sorry to inform you about your flight's cancellation. The money for the ticked will be returned to your bank account in a short time period");
+
+        //Map to DTO and return it
+        return userMapper.userToUserDto(userRepository.save(user));
+    }
+
+    @Override
     public TokenResponseDto login(TokenRequestDto tokenRequestDto) {
         //Try to find active user for specified credentials
         System.out.println( tokenRequestDto.getPassword());

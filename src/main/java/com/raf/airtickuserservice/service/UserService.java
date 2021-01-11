@@ -1,11 +1,8 @@
 package com.raf.airtickuserservice.service;
 
-import com.raf.airtickuserservice.domain.CreditCard;
 import com.raf.airtickuserservice.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserService {
@@ -29,6 +26,8 @@ public interface UserService {
     UserDto update(Long id, UserUpdateDto userUpdateDto);
 
     UserDto updateMiles(Long id, Integer miles);
+
+    UserDto cancelTicket(Long id, Integer flightLength);
 
     TokenResponseDto login(TokenRequestDto tokenRequestDto);
 }
